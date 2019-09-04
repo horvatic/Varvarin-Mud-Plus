@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29215.179
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Varvarin-Mud-Plus.Web", "Varvarin-Mud-Plus.Web\Varvarin-Mud-Plus.Web.csproj", "{3A133FFA-1ED7-447B-B3FB-A7534B9E2B56}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Varvarin-Mud-Plus.Engine", "Varvarin-Mud-Plus.Engine\Varvarin-Mud-Plus.Engine.csproj", "{E485AB14-EA5E-45A0-8ED6-D3D1B9037C3A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3A133FFA-1ED7-447B-B3FB-A7534B9E2B56}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3A133FFA-1ED7-447B-B3FB-A7534B9E2B56}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3A133FFA-1ED7-447B-B3FB-A7534B9E2B56}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3A133FFA-1ED7-447B-B3FB-A7534B9E2B56}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E485AB14-EA5E-45A0-8ED6-D3D1B9037C3A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E485AB14-EA5E-45A0-8ED6-D3D1B9037C3A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E485AB14-EA5E-45A0-8ED6-D3D1B9037C3A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E485AB14-EA5E-45A0-8ED6-D3D1B9037C3A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F47A4E23-7910-46C1-AD4E-C10D2F07BF93}
+	EndGlobalSection
+EndGlobal
