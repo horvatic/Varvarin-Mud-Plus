@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Varvarin_Mud_Plus.Engine.Command;
 using Varvarin_Mud_Plus.Engine.UserComponent;
 
 namespace Varvarin_Mud_Plus.Engine.Lobby
@@ -11,10 +12,13 @@ namespace Varvarin_Mud_Plus.Engine.Lobby
 
         private readonly List<User> Users;
         private readonly ConcurrentQueue<string> Messges;
-        public UserLobby()
+        private readonly ICommandProcessor _commandProcessor;
+
+        public UserLobby(ICommandProcessor commandProcessor)
         {
             Users = new List<User>();
             Messges = new ConcurrentQueue<string>();
+            _commandProcessor = commandProcessor;
         }
 
         public async Task RunUserSession(User user)
@@ -23,7 +27,15 @@ namespace Varvarin_Mud_Plus.Engine.Lobby
             var result = await user.ReceiveMessage();
             while (!result.HasConnectionClosed() && !result.IsConntectionLost())
             {
-                Messges.Enqueue(result.GetMessage());
+                var message = result.GetMessage();
+                if (message.StartsWith(":"))
+                {
+                    await _commandProcessor.ProcessCommand(user, Users, message);
+                }
+                else
+                {
+                    Messges.Enqueue($"User: {user.Name} Message: {message}");
+                }
                 result = await user.ReceiveMessage();
             }
             if(!result.IsConntectionLost())

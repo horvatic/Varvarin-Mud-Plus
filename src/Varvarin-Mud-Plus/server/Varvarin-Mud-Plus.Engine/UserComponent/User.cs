@@ -10,6 +10,7 @@ namespace Varvarin_Mud_Plus.Engine.UserComponent
     {
         private readonly WebSocket _webSocket;
         private readonly int _bufferSize;
+        public string Name { get; set; } = Guid.NewGuid().ToString();
 
         public User(WebSocket webSocket, int bufferSize)
         {
