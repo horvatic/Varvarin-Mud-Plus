@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using Varvarin_Mud_Plus.Engine.Command;
 using Varvarin_Mud_Plus.Engine.Lobby;
 using Varvarin_Mud_Plus.Engine.UserComponent;
 
@@ -28,7 +29,7 @@ namespace Varvarin_Mud_Plus.Web
                 ReceiveBufferSize = BUFFER_SIZE
             };
             app.UseWebSockets(webSocketOptions);
-            var userLobby = new UserLobby();
+            var userLobby = new UserLobby(new UserLobbyCommandProcessor());
             userLobby.StartLobby(new System.Threading.CancellationToken());
             app.Use(async (context, next) =>
             {

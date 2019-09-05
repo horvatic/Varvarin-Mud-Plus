@@ -2,7 +2,6 @@
 using System.Collections.Concurrent;
 using System.Net.WebSockets;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -19,8 +18,7 @@ namespace Varvarin_Mud_Plus.Console
 
         public void Start()
         {
-            System.Console.SetCursorPosition(0, System.Console.WindowHeight - 1);
-            var clientGuid = Guid.NewGuid();
+            ClearCurrentConsoleLine();
             var client = new ClientWebSocket();
             client.ConnectAsync(new Uri("ws://localhost:52479"), CancellationToken.None).GetAwaiter().GetResult();
             var cancellationTokenSource = new CancellationTokenSource();
@@ -36,20 +34,39 @@ namespace Varvarin_Mud_Plus.Console
                     {
                         var hasMessage = Messges.TryDequeue(out var message);
                         if (hasMessage)
+                        {
+                            ClearCurrentConsoleLine();
                             System.Console.WriteLine(message);
+                        }
                     }
                 }
             });
 
             var userInput = ReadUserInput();
 
-            while (userInput != "q!")
+            while (userInput != ":q!")
             {
-                client.SendAsync(Encoding.ASCII.GetBytes($"{userInput} Id: {clientGuid}"), WebSocketMessageType.Text, true, CancellationToken.None).GetAwaiter().GetResult();
+                if (userInput == ":clear")
+                {
+                    System.Console.Clear();
+                    System.Console.SetCursorPosition(0, System.Console.WindowHeight - 1);
+                }
+                else
+                {
+                    client.SendAsync(Encoding.ASCII.GetBytes(userInput), WebSocketMessageType.Text, true, CancellationToken.None).GetAwaiter().GetResult();
+                }
                 userInput = ReadUserInput();
             }
             cancellationTokenSource.Cancel();
             client.CloseAsync(WebSocketCloseStatus.NormalClosure, "", CancellationToken.None).GetAwaiter().GetResult();
+        }
+
+        public void ClearCurrentConsoleLine()
+        {
+            int currentLineCursor = System.Console.CursorTop;
+            System.Console.SetCursorPosition(0, System.Console.CursorTop);
+            System.Console.Write(new string(' ', System.Console.WindowWidth));
+            System.Console.SetCursorPosition(0, currentLineCursor);
         }
 
         private string ReadUserInput()
@@ -80,9 +97,7 @@ namespace Varvarin_Mud_Plus.Console
             {
                 var buffer = new byte[1024 * 4];
                 var result = await client.ReceiveAsync(buffer, CancellationToken.None);
-                var rgx = new Regex("[^a-zA-Z0-9 -]");
                 var message = Encoding.ASCII.GetString(buffer).Substring(0, result.Count);
-                message = rgx.Replace(message, "");
                 Messges.Enqueue(message);
             }
         }
