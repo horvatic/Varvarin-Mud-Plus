@@ -20,7 +20,7 @@ namespace Varvarin_Mud_Plus.Console
         {
             ClearCurrentConsoleLine();
             var client = new ClientWebSocket();
-            client.ConnectAsync(new Uri("ws://localhost:52479"), CancellationToken.None).GetAwaiter().GetResult();
+            client.ConnectAsync(new Uri("ws://localhost:56890"), CancellationToken.None).GetAwaiter().GetResult();
             var cancellationTokenSource = new CancellationTokenSource();
             Task.Run(async () =>
             {
@@ -49,7 +49,6 @@ namespace Varvarin_Mud_Plus.Console
                 if (userInput == ":clear")
                 {
                     System.Console.Clear();
-                    System.Console.SetCursorPosition(0, System.Console.WindowHeight - 1);
                 }
                 else
                 {
