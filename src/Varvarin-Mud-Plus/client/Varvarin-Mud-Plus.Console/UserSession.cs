@@ -20,7 +20,7 @@ namespace Varvarin_Mud_Plus.Console
         {
             ClearCurrentConsoleLine();
             var client = new ClientWebSocket();
-            client.ConnectAsync(new Uri("ws://localhost:56890"), CancellationToken.None).GetAwaiter().GetResult();
+            client.ConnectAsync(new Uri("ws://localhost:58392"), CancellationToken.None).GetAwaiter().GetResult();
             var cancellationTokenSource = new CancellationTokenSource();
             Task.Run(async () =>
             {
