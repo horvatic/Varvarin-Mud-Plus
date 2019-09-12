@@ -8,22 +8,26 @@ namespace Varvarin_Mud_Plus.Engine.Command
 {
     public class UserLobbyCommandProcessor : ICommandProcessor
     {
-        public async Task ProcessCommand(User mainUser, List<User> allUsers, string command)
+        public async Task ProcessCommand(IUser mainUser, List<IUser> allUsers, string command)
         {
             if(command.ToLower() == ":list all users")
             {
                 var userNames = "";
                 foreach(var user in allUsers)
                 {
-                    userNames += $"{user.Name}\n";
+                    userNames += $"{user.GetUserName()}\n";
                 }
                 await mainUser.SendMessage(userNames);
             }
             else if (command.ToLower().Contains(":set name="))
             {
                 var name = command.Substring(10, command.Length - 10 );
-                mainUser.Name = name;
+                mainUser.SetUserName(name);
                 await mainUser.SendMessage($"Name set to {name}");
+            }
+            else if(command.ToLower() == ":help")
+            {
+                await mainUser.SendMessage($":list all users\n:set name=NAME\n:logoff\n:clear\n");
             }
             else
             {

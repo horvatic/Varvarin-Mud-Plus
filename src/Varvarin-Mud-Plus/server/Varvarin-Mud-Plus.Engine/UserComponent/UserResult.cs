@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 
 namespace Varvarin_Mud_Plus.Engine.UserComponent
 {
-    public class UserResult
+    public class UserResult : IUserResult
     {
         private readonly WebSocketReceiveResult _receiveResult;
         private readonly byte[] _buffer;
@@ -21,7 +21,7 @@ namespace Varvarin_Mud_Plus.Engine.UserComponent
             return _receiveResult.CloseStatus.HasValue;
         }
 
-        public UserCloseResult GetCloseResult()
+        public IUserCloseResult GetCloseResult()
         {
             return new UserCloseResult(_receiveResult);
         }

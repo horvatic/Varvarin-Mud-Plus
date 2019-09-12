@@ -10,20 +10,21 @@ namespace Varvarin_Mud_Plus.Engine.Lobby
     public class UserLobby
     {
 
-        private readonly List<User> Users;
+        private readonly List<IUser> Users;
         private readonly ConcurrentQueue<string> Messges;
         private readonly ICommandProcessor _commandProcessor;
 
         public UserLobby(ICommandProcessor commandProcessor)
         {
-            Users = new List<User>();
+            Users = new List<IUser>();
             Messges = new ConcurrentQueue<string>();
             _commandProcessor = commandProcessor;
         }
 
-        public async Task RunUserSession(User user)
+        public async Task RunUserSession(IUser user)
         {
             Users.Add(user);
+            await user.SendMessage("Welcome To Varvarin Mud!\nType :help for all commands");
             var result = await user.ReceiveMessage();
             while (!result.HasConnectionClosed() && !result.IsConntectionLost())
             {
@@ -34,7 +35,7 @@ namespace Varvarin_Mud_Plus.Engine.Lobby
                 }
                 else
                 {
-                    Messges.Enqueue($"User: {user.Name} Message: {message}");
+                    Messges.Enqueue($"User: {user.GetUserName()}\nMessage: {message}\n");
                 }
                 result = await user.ReceiveMessage();
             }

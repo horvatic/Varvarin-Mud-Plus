@@ -6,19 +6,30 @@ using System.Threading.Tasks;
 
 namespace Varvarin_Mud_Plus.Engine.UserComponent
 {
-    public class User
+    public class User : IUser
     {
         private readonly WebSocket _webSocket;
         private readonly int _bufferSize;
-        public string Name { get; set; } = Guid.NewGuid().ToString();
+        private string name;
 
         public User(WebSocket webSocket, int bufferSize)
         {
             _webSocket = webSocket;
             _bufferSize = bufferSize;
+            name = Guid.NewGuid().ToString();
+        }
+        
+        public string GetUserName()
+        {
+            return name;
         }
 
-        public async Task<UserResult> ReceiveMessage()
+        public void SetUserName(string newName)
+        {
+            name = newName;
+        }
+
+        public async Task<IUserResult> ReceiveMessage()
         {
             var buffer = new byte[_bufferSize];
             UserResult result;
@@ -41,7 +52,7 @@ namespace Varvarin_Mud_Plus.Engine.UserComponent
             await _webSocket.SendAsync(new ArraySegment<byte>(Encoding.ASCII.GetBytes(message)), WebSocketMessageType.Text, true, CancellationToken.None);
         }
 
-        public async Task CloseUserConnection(UserCloseResult result)
+        public async Task CloseUserConnection(IUserCloseResult result)
         {
             await _webSocket.CloseAsync(result.CloseStatus, result.CloseStatusDescription, CancellationToken.None);
         }

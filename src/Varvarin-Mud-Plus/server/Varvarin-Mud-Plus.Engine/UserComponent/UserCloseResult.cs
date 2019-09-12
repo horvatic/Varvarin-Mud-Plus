@@ -2,7 +2,7 @@
 
 namespace Varvarin_Mud_Plus.Engine.UserComponent
 { 
-    public class UserCloseResult
+    public class UserCloseResult : IUserCloseResult
     {
         private readonly WebSocketReceiveResult _webSocketReceiveResult;
 
