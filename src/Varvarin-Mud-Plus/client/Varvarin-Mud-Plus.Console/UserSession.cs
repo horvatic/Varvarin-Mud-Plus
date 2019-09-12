@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Configuration;
+using System;
 using System.Collections.Concurrent;
 using System.Net.WebSockets;
 using System.Text;
@@ -10,17 +11,19 @@ namespace Varvarin_Mud_Plus.Console
     public class UserSession
     {
         private readonly ConcurrentQueue<string> Messges;
+        private readonly IConfiguration _config;
 
-        public UserSession()
+        public UserSession(IConfiguration config)
         {
             Messges = new ConcurrentQueue<string>();
+            _config = config;
         }
 
         public void Start()
         {
             ClearCurrentConsoleLine();
             var client = new ClientWebSocket();
-            client.ConnectAsync(new Uri("ws://localhost:58392"), CancellationToken.None).GetAwaiter().GetResult();
+            client.ConnectAsync(new Uri(_config["Server:Uri"]), CancellationToken.None).GetAwaiter().GetResult();
             var cancellationTokenSource = new CancellationTokenSource();
             Task.Run(async () =>
             {
@@ -44,7 +47,7 @@ namespace Varvarin_Mud_Plus.Console
 
             var userInput = ReadUserInput();
 
-            while (userInput != ":q!")
+            while (userInput != ":logoff")
             {
                 if (userInput == ":clear")
                 {

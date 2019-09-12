@@ -6,6 +6,6 @@ namespace Varvarin_Mud_Plus.Engine.Command
 {
     public interface ICommandProcessor
     {
-        Task ProcessCommand(User mainUser, List<User> allUsers, string command);
+        Task ProcessCommand(IUser mainUser, List<IUser> allUsers, string command);
     }
 }
