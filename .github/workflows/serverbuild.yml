@@ -15,3 +15,5 @@ jobs:
         dotnet-version: 2.2.108
     - name: Build with dotnet
       run: dotnet build src/Varvarin-Mud-Plus/server/Varvarin-Mud-Plus.sln --configuration Release
+    - name: Run Test
+      run: dotnet test src/Varvarin-Mud-Plus/server
