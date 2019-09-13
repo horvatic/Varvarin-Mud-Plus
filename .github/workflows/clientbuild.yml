@@ -1,4 +1,4 @@
-name: Varvarin-Mud-Plus Client Build
+name: Client
 
 on: [push]
 
