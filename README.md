@@ -1,6 +1,7 @@
 # Varvarin-Mud-Plus
-https://github.com/horvatic/Varvarin-Mud-Plus/workflows/Client/badge.svg
-https://github.com/horvatic/Varvarin-Mud-Plus/workflows/Server/badge.svg
+![](https://github.com/horvatic/Varvarin-Mud-Plus/workflows/Client/badge.svg)
+
+![](https://github.com/horvatic/Varvarin-Mud-Plus/workflows/Server/badge.svg)
 
 A mud engine for running simple games.
 
