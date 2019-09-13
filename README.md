@@ -3,7 +3,17 @@ A mud engine for running simple games.
 
 ## How to run
 ### Server:
+Dot net core
+	
 	type: dotnet run in the project Varvarin-Mud-Plus.Web
+	
+Docker:
+
+	Building:
+	docker build -t varvarin .	
+	
+	Running:
+	docker run -p 8080:8080 --name varvarin varvarin
 	
 ### Client:
 	type dotnet run in the project Varvarin-Mud-Plus.Console
