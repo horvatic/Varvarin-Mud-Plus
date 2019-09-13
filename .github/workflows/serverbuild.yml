@@ -1,4 +1,4 @@
-name: Varvarin-Mud-Plus Server Build
+name: Server
 
 on: [push]
 
