@@ -43,20 +43,7 @@ namespace Varvarin_Mud_Plus.Engine.Test.Command
 
             await userLobby.ProcessCommand(mainUser, new List<IUser> { mainUser }, ":help");
 
-            mainUser.VerifySendMessageCalledWith($":list all users\n:set name=NAME\n:logoff\n:clear\n");
-        }
-
-        [Theory]
-        [InlineData(":dwqwqwd")]
-        [InlineData("12343d")]
-        public async Task ProcessCommand_RandomCommands(string commands)
-        {
-            var mainUser = new MockUser();
-            var userLobby = new UserLobbyCommandProcessor();
-
-            await userLobby.ProcessCommand(mainUser, new List<IUser> { mainUser }, commands);
-
-            mainUser.VerifySendMessageCalledWith("INVAILD COMMAND");
+            mainUser.VerifySendMessageCalledWith($":list all users\n:set name=NAME\n");
         }
     }
 }

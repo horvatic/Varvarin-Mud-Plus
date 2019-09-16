@@ -64,5 +64,15 @@ namespace Varvarin_Mud_Plus.Engine.Test.Mocks
             _user.Setup(x => x.GetUserName()).Returns(username);
             return this;
         }
+
+        public void SetLobbyContext(Guid lobbyId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Guid GetLobbyContext()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

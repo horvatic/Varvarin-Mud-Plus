@@ -11,12 +11,14 @@ namespace Varvarin_Mud_Plus.Engine.UserComponent
         private readonly WebSocket _webSocket;
         private readonly int _bufferSize;
         private string name;
+        private Guid lobbyContext;
 
-        public User(WebSocket webSocket, int bufferSize)
+        public User(WebSocket webSocket, int bufferSize, Guid initLobbyContext)
         {
             _webSocket = webSocket;
             _bufferSize = bufferSize;
             name = Guid.NewGuid().ToString();
+            lobbyContext = initLobbyContext;
         }
         
         public string GetUserName()
@@ -62,6 +64,16 @@ namespace Varvarin_Mud_Plus.Engine.UserComponent
             var state = _webSocket.State;
 
             return state == WebSocketState.Closed || state == WebSocketState.Aborted || state == WebSocketState.CloseReceived;
+        }
+
+        public void SetLobbyContext(Guid lobbyId)
+        {
+            lobbyContext = lobbyId;
+        }
+
+        public Guid GetLobbyContext()
+        {
+            return lobbyContext;
         }
     }
 }
