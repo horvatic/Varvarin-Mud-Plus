@@ -29,15 +29,18 @@ namespace Varvarin_Mud_Plus.Web
                 ReceiveBufferSize = BUFFER_SIZE
             };
             app.UseWebSockets(webSocketOptions);
-            var userLobby = new UserLobby(new UserLobbyCommandProcessor());
-            userLobby.StartLobby(new System.Threading.CancellationToken());
+            var deafultLobbyId = Guid.NewGuid();
+            var deafultLobby = new MessageLobby(deafultLobbyId, new UserLobbyCommandProcessor());
+            var lobbyCoordinator = new LobbyCoordinator(deafultLobby, new LobbyCoordinatorCommandProcessor());
+
             app.Use(async (context, next) =>
             {
                 if (context.WebSockets.IsWebSocketRequest)
                 {
                     var socket = await context.WebSockets.AcceptWebSocketAsync();
-                    var user = new User(socket, BUFFER_SIZE);
-                    await userLobby.RunUserSession(user);
+                    var user = new User(socket, BUFFER_SIZE, deafultLobbyId);
+                    deafultLobby.AddUserToLobby(user);
+                    await lobbyCoordinator.RunUserSession(user);
                 }
                 else
                 {

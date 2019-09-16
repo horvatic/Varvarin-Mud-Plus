@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Varvarin_Mud_Plus.Engine.UserComponent;
 
 namespace Varvarin_Mud_Plus.Engine.Command
 {
-    public class UserLobbyCommandProcessor : ICommandProcessor
+    public class UserLobbyCommandProcessor
     {
         public async Task ProcessCommand(IUser mainUser, List<IUser> allUsers, string command)
         {
@@ -27,11 +25,7 @@ namespace Varvarin_Mud_Plus.Engine.Command
             }
             else if(command.ToLower() == ":help")
             {
-                await mainUser.SendMessage($":list all users\n:set name=NAME\n:logoff\n:clear\n");
-            }
-            else
-            {
-                await mainUser.SendMessage("INVAILD COMMAND");
+                await mainUser.SendMessage($":list all users\n:set name=NAME\n");
             }
         }
     }

@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 
 namespace Varvarin_Mud_Plus.Engine.UserComponent
 {
@@ -10,5 +11,7 @@ namespace Varvarin_Mud_Plus.Engine.UserComponent
         Task SendMessage(string message);
         Task CloseUserConnection(IUserCloseResult result);
         bool IsAlive();
+        void SetLobbyContext(Guid lobbyId);
+        Guid GetLobbyContext();
     }
 }
