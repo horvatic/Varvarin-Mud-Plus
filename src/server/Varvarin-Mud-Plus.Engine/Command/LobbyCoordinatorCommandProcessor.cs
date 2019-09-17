@@ -14,8 +14,7 @@ namespace Varvarin_Mud_Plus.Engine.Command
         {
             if (command.ToLower() == ":help")
             {
-                await user.SendMessage(
-                    ":logoff\n:clear\n:list lobby types\n:list created lobbies\n:current lobby\n:join lobby={LOBBY ID}\n:make lobby={LOBBY TYPE}\n:leave lobby");
+                await user.SendMessage(GetHelp());
             }
             else if(command.ToLower() == ":list created lobbies")
             {
@@ -72,6 +71,10 @@ namespace Varvarin_Mud_Plus.Engine.Command
                     await user.SendMessage($"Could not make {name}\n");
                 }
             }
+            else
+            {
+                await user.SendMessage($"INVAILD COMMAND\n");
+            }
         }
 
         private async Task AddUserToMessageLobby(IUser user, List<ILobby> lobbies, Guid deafultLobbyId)
@@ -105,6 +108,22 @@ namespace Varvarin_Mud_Plus.Engine.Command
         private string FormatLobbyInfo(ILobby lobby)
         {
             return $"Lobby Type: {lobby.GetLobbyType()} | Lobby Id: {lobby.GetLobbyId()}";
+        }
+
+        private string GetHelp()
+        {
+            return @"
+:help - server commands
+!:help - current lobby commands
+:logoff - logoff and end session
+:clear - clear the screen
+:list lobby types - list all lobbies that can be created
+:list created lobbies - list all lobbies users have created
+:current lobby - get info for the current lobby
+:join lobby={LOBBY ID} - join lobby with id
+:make lobby={LOBBY TYPE} - join lobby
+:leave lobby - leave current lobby
+";
         }
     }
 }

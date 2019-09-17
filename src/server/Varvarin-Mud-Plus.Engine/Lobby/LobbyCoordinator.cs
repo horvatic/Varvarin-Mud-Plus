@@ -39,7 +39,10 @@ namespace Varvarin_Mud_Plus.Engine.Lobby
                 {
                     await _lobbyCoordinatorCommandProcessor.ProcessCommand(user, _lobbies, _deafultLobbyId, result.GetMessage());
                 }
-                await userLobby.ProcessClientMessage(result.GetMessage(), user);
+                else
+                {
+                    await userLobby.ProcessClientMessage(result.GetMessage(), user);
+                }
                 result = await user.ReceiveMessage();
             }
             if(!result.IsConntectionLost())

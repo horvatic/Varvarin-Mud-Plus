@@ -73,7 +73,7 @@ namespace Varvarin_Mud_Plus.Engine.Lobby
 
         public async Task ProcessClientMessage(string message, IUser user)
         {
-            if (message.StartsWith(":"))
+            if (message.StartsWith("!:"))
             {
                 await _commandProcessor.ProcessCommand(user, _allUsers, message);
             }
