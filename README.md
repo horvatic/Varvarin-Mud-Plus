@@ -30,5 +30,4 @@ Acts as a text chat
 
 ## Comming soon:
 
-- TicTacToe Lobby
-- Much More!
+- Code Cleanup
