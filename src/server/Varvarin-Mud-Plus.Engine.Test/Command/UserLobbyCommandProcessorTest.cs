@@ -17,7 +17,7 @@ namespace Varvarin_Mud_Plus.Engine.Test.Command
             var user = new MockUser();
             var userLobby = new UserLobbyCommandProcessor();
 
-            await userLobby.ProcessCommand(user, new List<IUser> { user }, $":set name={name}");
+            await userLobby.ProcessCommand(user, new List<IUser> { user }, $"!:set name={name}");
 
             user.VerifySetUserNameWasCalledWith(name);
         }
@@ -29,7 +29,7 @@ namespace Varvarin_Mud_Plus.Engine.Test.Command
             var otherUser = new MockUser().StubSetUserName("John");
             var userLobby = new UserLobbyCommandProcessor();
 
-            await userLobby.ProcessCommand(mainUser, new List<IUser> { mainUser, otherUser }, ":list all users");
+            await userLobby.ProcessCommand(mainUser, new List<IUser> { mainUser, otherUser }, "!:list all users");
 
             mainUser.VerifySendMessageCalledWith("Mike\nJohn\n");
             otherUser.VerifySendMessageWasNotCalled();
@@ -41,9 +41,32 @@ namespace Varvarin_Mud_Plus.Engine.Test.Command
             var mainUser = new MockUser();
             var userLobby = new UserLobbyCommandProcessor();
 
-            await userLobby.ProcessCommand(mainUser, new List<IUser> { mainUser }, ":help");
+            await userLobby.ProcessCommand(mainUser, new List<IUser> { mainUser }, "!:help");
 
-            mainUser.VerifySendMessageCalledWith($":list all users\n:set name=NAME\n");
+            mainUser.VerifySendMessageCalledWith(GetHelp());
+        }
+
+        [Theory]
+        [InlineData(":dwqwqwd")]
+        [InlineData("!:fwqffqwfwqs")]
+        [InlineData("12343d")]
+        public async Task ProcessCommand_RandomCommands(string commands)
+        {
+            var mainUser = new MockUser();
+            var userLobby = new UserLobbyCommandProcessor();
+
+            await userLobby.ProcessCommand(mainUser, new List<IUser> { mainUser }, commands);
+
+            mainUser.VerifySendMessageCalledWith("INVAILD COMMAND\n");
+        }
+
+        private string GetHelp()
+        {
+            return @"
+!:help - current lobby commands
+!:list all users
+!:set name={NAME}
+";
         }
     }
 }
