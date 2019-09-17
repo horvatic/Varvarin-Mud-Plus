@@ -17,12 +17,6 @@ namespace Varvarin_Mud_Plus.Engine.Command
                 }
                 await mainUser.SendMessage(userNames);
             }
-            else if (command.ToLower().Contains("!:set name="))
-            {
-                var name = command.Substring(11, command.Length - 11 );
-                mainUser.SetUserName(name);
-                await mainUser.SendMessage($"Name set to {name}");
-            }
             else if(command.ToLower() == "!:help")
             {
                 await mainUser.SendMessage(GetHelp());
@@ -38,7 +32,6 @@ namespace Varvarin_Mud_Plus.Engine.Command
             return @"
 !:help - current lobby commands
 !:list all users
-!:set name={NAME}
 ";
         }
     }

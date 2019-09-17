@@ -62,13 +62,12 @@ namespace Varvarin_Mud_Plus.Engine.Lobby
                     }
                 }
             });
-
         }
 
-        public AddUserToLobbyResult AddUserToLobby(IUser user)
+        public async Task<AddUserToLobbyResult> AddUserToLobby(IUser user)
         {
             _allUsers.Add(user);
-            return AddUserToLobbyResult.AddedToLobby;
+            return await Task.FromResult(AddUserToLobbyResult.AddedToLobby);
         }
 
         public async Task ProcessClientMessage(string message, IUser user)
@@ -83,9 +82,10 @@ namespace Varvarin_Mud_Plus.Engine.Lobby
             }
         }
 
-        public void RemoveUser(IUser user)
+        public async Task RemoveUser(IUser user)
         {
             _allUsers.Remove(user);
+            await Task.CompletedTask;
         }
 
         public bool IsLobbyEmpty()

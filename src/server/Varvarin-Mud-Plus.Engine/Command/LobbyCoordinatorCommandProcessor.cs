@@ -33,13 +33,19 @@ namespace Varvarin_Mud_Plus.Engine.Command
             }
             else if (command.ToLower() == ":list lobby types")
             {
-                await user.SendMessage($"{MessageLobby.LOBBY_TYPE}\n");
+                await user.SendMessage($"{MessageLobby.LOBBY_TYPE}\n{TicTacToeLobby.LOBBY_TYPE}\n");
             }
             else if (command.ToLower().StartsWith(":leave lobby"))
             {
                 var lobby = lobbies.FirstOrDefault(x => x.GetLobbyId() == deafultLobbyId);
-                RemoveFromLobby(user, lobbies, deafultLobbyId);
+                await RemoveFromLobby(user, lobbies, deafultLobbyId);
                 await AddToLobby(user, lobby, deafultLobbyId);
+            }
+            else if (command.ToLower().Contains(":set name="))
+            {
+                var name = command.Substring(10, command.Length - 10);
+                user.SetUserName(name);
+                await user.SendMessage($"Name set to {name}");
             }
             else if (command.ToLower().StartsWith(":join lobby="))
             {
@@ -50,7 +56,7 @@ namespace Varvarin_Mud_Plus.Engine.Command
                     var lobby = lobbies.FirstOrDefault(x => x.GetLobbyId() == lobbyRequested);
                     if (lobby == null)
                         throw new Exception();
-                    RemoveFromLobby(user, lobbies, deafultLobbyId);
+                    await RemoveFromLobby(user, lobbies, deafultLobbyId);
                     await AddToLobby(user, lobby, lobbyRequested);
                 }
                 catch
@@ -66,6 +72,10 @@ namespace Varvarin_Mud_Plus.Engine.Command
                 {
                     await AddUserToMessageLobby(user, lobbies, deafultLobbyId);
                 }
+                else if (name.ToLower() == TicTacToeLobby.LOBBY_TYPE.ToLower())
+                {
+                    await AddUserToTicTacToeLobby(user, lobbies, deafultLobbyId);
+                }
                 else
                 {
                     await user.SendMessage($"Could not make {name}\n");
@@ -77,9 +87,18 @@ namespace Varvarin_Mud_Plus.Engine.Command
             }
         }
 
+        private async Task AddUserToTicTacToeLobby(IUser user, List<ILobby> lobbies, Guid deafultLobbyId)
+        {
+            await RemoveFromLobby(user, lobbies, deafultLobbyId);
+            var lobbyId = Guid.NewGuid();
+            var newLobby = new TicTacToeLobby(lobbyId);
+            await AddToLobby(user, newLobby, lobbyId);
+            lobbies.Add(newLobby);
+        }
+
         private async Task AddUserToMessageLobby(IUser user, List<ILobby> lobbies, Guid deafultLobbyId)
         {
-            RemoveFromLobby(user, lobbies, deafultLobbyId);
+            await RemoveFromLobby(user, lobbies, deafultLobbyId);
             var lobbyId = Guid.NewGuid();
             var newLobby = new MessageLobby(lobbyId, new UserLobbyCommandProcessor());
             await AddToLobby(user, newLobby, lobbyId);
@@ -89,15 +108,15 @@ namespace Varvarin_Mud_Plus.Engine.Command
         public async Task AddToLobby(IUser user, ILobby lobby, Guid lobbyId)
         {
             user.SetLobbyContext(lobbyId);
-            lobby.AddUserToLobby(user);
+            await lobby.AddUserToLobby(user);
             lobby.StartLobby();
             await user.SendMessage($"Joining: {FormatLobbyInfo(lobby)}\n");
         }
 
-        private void RemoveFromLobby(IUser user, List<ILobby> lobbies, Guid deafultLobbyId)
+        private async Task RemoveFromLobby(IUser user, List<ILobby> lobbies, Guid deafultLobbyId)
         {
             var userLobby = lobbies.GetUserLobby(user);
-            userLobby.RemoveUser(user);
+            await userLobby.RemoveUser(user);
             if (userLobby.IsLobbyEmpty() && userLobby.GetLobbyId() != deafultLobbyId)
             {
                 userLobby.StopLobby();
@@ -115,6 +134,7 @@ namespace Varvarin_Mud_Plus.Engine.Command
             return @"
 :help - server commands
 !:help - current lobby commands
+:set name={NAME}
 :logoff - logoff and end session
 :clear - clear the screen
 :list lobby types - list all lobbies that can be created

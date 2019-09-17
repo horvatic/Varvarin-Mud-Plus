@@ -48,7 +48,7 @@ namespace Varvarin_Mud_Plus.Engine.Lobby
             if(!result.IsConntectionLost())
                 await user.CloseUserConnection(result.GetCloseResult());
             userLobby = _lobbies.Where(x => x.GetLobbyId() == _deafultLobbyId).First();
-            userLobby.RemoveUser(user);
+            await userLobby.RemoveUser(user);
 
             if (userLobby.IsLobbyEmpty() && userLobby.GetLobbyId() != _deafultLobbyId)
                 userLobby.StopLobby();
