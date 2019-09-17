@@ -11,8 +11,8 @@ namespace Varvarin_Mud_Plus.Engine.Lobby
         Guid GetLobbyId();
         void StopLobby();
         void StartLobby();
-        AddUserToLobbyResult AddUserToLobby(IUser user);
-        void RemoveUser(IUser user);
+        Task<AddUserToLobbyResult> AddUserToLobby(IUser user);
+        Task RemoveUser(IUser user);
         bool IsLobbyEmpty();
         Task ProcessClientMessage(string message, IUser user);
     }
