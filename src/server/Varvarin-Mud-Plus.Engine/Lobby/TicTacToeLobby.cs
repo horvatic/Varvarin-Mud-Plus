@@ -180,15 +180,17 @@ namespace Varvarin_Mud_Plus.Engine.Lobby
         {
             if (playerOne == user)
             {
+                var playName = playerOne.GetUserName();
                 playerOne = null;
                 if (playerTwo != null)
-                    await playerTwo.SendMessage($"{playerOne.GetUserName()} left the lobby");
+                    await playerTwo.SendMessage($"{playName} left the lobby");
             }
             else if (playerTwo == user)
             {
+                var playName = playerTwo.GetUserName();
                 playerTwo = null;
                 if (playerOne != null)
-                    await playerOne.SendMessage($"{playerTwo.GetUserName()} left the lobby");
+                    await playerOne.SendMessage($"{playName} left the lobby");
             }
         }
 
