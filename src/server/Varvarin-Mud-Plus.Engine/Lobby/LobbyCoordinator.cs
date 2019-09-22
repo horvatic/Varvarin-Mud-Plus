@@ -45,13 +45,14 @@ namespace Varvarin_Mud_Plus.Engine.Lobby
                 }
                 result = await user.ReceiveMessage();
             }
-            if(!result.IsConntectionLost())
-                await user.CloseUserConnection(result.GetCloseResult());
-            userLobby = _lobbies.Where(x => x.GetLobbyId() == _deafultLobbyId).First();
-            await userLobby.RemoveUser(user);
 
+            userLobby = _lobbies.GetUserLobby(user);
+            await userLobby.RemoveUser(user);
             if (userLobby.IsLobbyEmpty() && userLobby.GetLobbyId() != _deafultLobbyId)
                 userLobby.StopLobby();
+
+            if (!result.IsConntectionLost())
+                await user.CloseUserConnection(result.GetCloseResult());
         }
 
         private void SetUserLobbyToDeafult(IUser user)
