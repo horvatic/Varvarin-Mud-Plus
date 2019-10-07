@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading;
 using System.Threading.Tasks;
 using Varvarin_Mud_Plus.Engine.Extensions;
 using Varvarin_Mud_Plus.Engine.UserComponent;
@@ -14,7 +13,6 @@ namespace Varvarin_Mud_Plus.Engine.Lobby
         private bool isPlayOneTurn;
         private TicTacToeLobbyGameBoardState gameState;
         private readonly Guid _id;
-        private readonly CancellationTokenSource lobbyCancellationTokenSource;
         private readonly TicTacToeGameBoardCellState[,] gameboard;
 
         public TicTacToeLobby(Guid id)
@@ -22,7 +20,6 @@ namespace Varvarin_Mud_Plus.Engine.Lobby
             _id = id;
             playerOne = null;
             playerTwo = null;
-            lobbyCancellationTokenSource = new CancellationTokenSource();
             gameboard = new TicTacToeGameBoardCellState[3,3];
             gameboard.SetInitState();
             isPlayOneTurn = true;
@@ -31,8 +28,7 @@ namespace Varvarin_Mud_Plus.Engine.Lobby
 
         public async Task<AddUserToLobbyResult> AddUserToLobby(IUser user)
         {
-            var result = AddUserToLobbyResult.FailedToAddLobbyFull;
-
+            AddUserToLobbyResult result;
             if (playerOne == null)
             {
                 playerOne = user;
@@ -58,10 +54,8 @@ namespace Varvarin_Mud_Plus.Engine.Lobby
 
             if (playerTwo != null && playerOne != null)
             {
-                await playerOne.SendMessage(gameboard.ToGameString());
-                await playerTwo.SendMessage(gameboard.ToGameString());
-                await playerOne.SendMessage(isPlayOneTurn ? $"{playerOne.GetUserName()} turn" : $"{playerTwo.GetUserName()} turn");
-                await playerTwo.SendMessage(isPlayOneTurn ? $"{playerOne.GetUserName()} turn" : $"{playerTwo.GetUserName()} turn");
+                await SendMessageToBothPlayers(playerOne, playerTwo, gameboard.ToGameString());
+                await SendMessageToBothPlayers(playerOne, playerTwo, isPlayOneTurn ? $"{playerOne.GetUserName()} turn" : $"{playerTwo.GetUserName()} turn");
             }
 
             return result;
@@ -102,6 +96,66 @@ namespace Varvarin_Mud_Plus.Engine.Lobby
                 return;
             }
 
+            if (!await ApplyPlayerMove(message, user))
+                return;
+
+            await SendMessageToBothPlayers(playerOne, playerTwo, gameboard.ToGameString());
+
+            if (gameboard.DidTagWin(isPlayOneTurn ? TicTacToeGameBoardCellState.X : TicTacToeGameBoardCellState.O))
+            {
+                var winningMessage = isPlayOneTurn ? $"{playerOne.GetUserName()} Won!\n" : $"{playerTwo.GetUserName()} Won!\n";
+
+                await SendMessageToBothPlayers(playerOne, playerTwo, winningMessage);
+                await SendMessageToBothPlayers(playerOne, playerTwo, "The game is over, please leave the lobby with :leave lobby");
+
+                gameState = TicTacToeLobbyGameBoardState.GameOver;
+            }
+            else if(gameboard.IsTie())
+            {
+                await SendMessageToBothPlayers(playerOne, playerTwo, "Game is tie!");
+                await SendMessageToBothPlayers(playerOne, playerTwo, "The game is over, please leave the lobby with :leave lobby");
+                gameState = TicTacToeLobbyGameBoardState.GameOver;
+            }
+
+            isPlayOneTurn = !isPlayOneTurn;
+
+            await SendMessageToBothPlayers(playerOne, playerTwo, isPlayOneTurn ? $"{playerOne.GetUserName()} turn" : $"{playerTwo.GetUserName()} turn");
+        }
+
+        public async Task RemoveUser(IUser user)
+        {
+            if (playerOne == user)
+            {
+                var playName = playerOne.GetUserName();
+                playerOne = null;
+                if (playerTwo != null)
+                    await playerTwo.SendMessage($"{playName} left the lobby");
+            }
+            else if (playerTwo == user)
+            {
+                var playName = playerTwo.GetUserName();
+                playerTwo = null;
+                if (playerOne != null)
+                    await playerOne.SendMessage($"{playName} left the lobby");
+            }
+        }
+
+        public void StartLobby()
+        {
+        }
+
+        public void StopLobby()
+        {
+        }
+
+        private async Task SendMessageToBothPlayers(IUser playerOne, IUser playerTwo, string message)
+        {
+            await playerOne.SendMessage(message);
+            await playerTwo.SendMessage(message);
+        }
+
+        private async Task<bool> ApplyPlayerMove(string message, IUser user)
+        {
             bool didMove;
             if (message == "1")
             {
@@ -142,64 +196,16 @@ namespace Varvarin_Mud_Plus.Engine.Lobby
             else
             {
                 await user.SendMessage("INVAILD MOVE");
-                return;
+                return false;
             }
 
-            if (!didMove) { 
+            if (!didMove)
+            {
                 await user.SendMessage($"INVAILD MOVE");
-                return;
+                return false;
             }
 
-            await playerOne.SendMessage(gameboard.ToGameString());
-            await playerTwo.SendMessage(gameboard.ToGameString());
-
-            if(gameboard.DidTagWin(isPlayOneTurn ? TicTacToeGameBoardCellState.X : TicTacToeGameBoardCellState.O))
-            {
-                var winningMessage = isPlayOneTurn ? $"{playerOne.GetUserName()} Won!\n" : $"{playerTwo.GetUserName()} Won!\n";
-                await playerOne.SendMessage(winningMessage);
-                await playerTwo.SendMessage(winningMessage);
-                await playerOne.SendMessage("The game is over, please leave the lobby with :leave lobby");
-                await playerTwo.SendMessage("The game is over, please leave the lobby with :leave lobby");
-                gameState = TicTacToeLobbyGameBoardState.GameOver;
-            }
-            else if(gameboard.IsTie())
-            {
-                await playerOne.SendMessage("Game is tie!");
-                await playerTwo.SendMessage("Game is tie!");
-                await playerOne.SendMessage("The game is over, please leave the lobby with :leave lobby");
-                await playerTwo.SendMessage("The game is over, please leave the lobby with :leave lobby");
-                gameState = TicTacToeLobbyGameBoardState.GameOver;
-            }
-
-            isPlayOneTurn = !isPlayOneTurn;
-            await playerOne.SendMessage(isPlayOneTurn ? $"{playerOne.GetUserName()} turn" : $"{playerTwo.GetUserName()} turn");
-            await playerTwo.SendMessage(isPlayOneTurn ? $"{playerOne.GetUserName()} turn" : $"{playerTwo.GetUserName()} turn");
-        }
-
-        public async Task RemoveUser(IUser user)
-        {
-            if (playerOne == user)
-            {
-                var playName = playerOne.GetUserName();
-                playerOne = null;
-                if (playerTwo != null)
-                    await playerTwo.SendMessage($"{playName} left the lobby");
-            }
-            else if (playerTwo == user)
-            {
-                var playName = playerTwo.GetUserName();
-                playerTwo = null;
-                if (playerOne != null)
-                    await playerOne.SendMessage($"{playName} left the lobby");
-            }
-        }
-
-        public void StartLobby()
-        {
-        }
-
-        public void StopLobby()
-        {
+            return true;
         }
 
         private bool TryMoveToLocation(int x, int y, TicTacToeGameBoardCellState playerTag)
