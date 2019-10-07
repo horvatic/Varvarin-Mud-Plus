@@ -39,7 +39,7 @@ namespace Varvarin_Mud_Plus.Web
                 {
                     var socket = await context.WebSockets.AcceptWebSocketAsync();
                     var user = new User(socket, BUFFER_SIZE, deafultLobbyId);
-                    deafultLobby.AddUserToLobby(user);
+                    deafultLobby.AddUserToLobby(user).GetAwaiter().GetResult();
                     await lobbyCoordinator.RunUserSession(user);
                 }
                 else
